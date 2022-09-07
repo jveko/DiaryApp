@@ -54,6 +54,7 @@ builder.Services.AddDbContext<DiaryContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DiaryContext")));
 
 builder.Services.AddTransient<IUserService, UserService>();
+builder.Services.AddTransient<INoteService, NoteService>();
 builder.Services.AddControllers().ConfigureApiBehaviorOptions(options =>
 {
     options.InvalidModelStateResponseFactory = context =>
