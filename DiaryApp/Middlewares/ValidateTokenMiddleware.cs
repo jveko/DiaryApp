@@ -21,12 +21,8 @@ public class ValidateTokenMiddleware
             var claims = TokenManager.ValidateAccessToken(token);
             var id = claims?.Claims.FirstOrDefault(r => r.Type.Equals("userId"));
             if (id != null)
-            {
                 if (int.TryParse(id.Value, out var realId))
-                {
                     context.Items["User"] = await userService.GetUser(realId);
-                }
-            }
         }
 
 

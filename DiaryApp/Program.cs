@@ -1,4 +1,5 @@
 using System.Net.Mime;
+using System.Text.Json.Serialization;
 using DiaryApp.Contexts;
 using DiaryApp.Interfaces;
 using DiaryApp.Middlewares;
@@ -17,7 +18,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo() {Title = "DiaryApp", Version = "v1"});
+    c.SwaggerDoc("v1", new OpenApiInfo {Title = "DiaryApp", Version = "v1"});
     c.AddSecurityDefinition("Bearer",
         new OpenApiSecurityScheme
         {
@@ -75,13 +76,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
-// app.UseMiddleware<ValidateTokenMiddleware>();
-app.MapWhen(r => r.Request.Path.StartsWithSegments("/Notes"), config =>
-{
-    config.UseMiddleware<ValidateTokenMiddleware>();
-});
+app.UseMiddleware<ValidateTokenMiddleware>();
 app.MapControllers();
-
 
 
 app.Run();
