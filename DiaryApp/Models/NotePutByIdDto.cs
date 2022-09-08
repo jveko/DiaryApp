@@ -1,10 +1,9 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using DiaryApp.Entities;
 
 namespace DiaryApp.Models;
 
-public class NoteDto
+public class NotePutByIdDto
 {
     public int Id { get; set; }
     [Required]
@@ -19,5 +18,4 @@ public class NoteDto
     [Required]
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
-    public UserInNoteDto User { get; set; }
 }

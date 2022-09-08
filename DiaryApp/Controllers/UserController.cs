@@ -3,12 +3,12 @@ using DiaryApp.Entities;
 using DiaryApp.Interfaces;
 using DiaryApp.Models;
 using DiaryApp.Responses;
-using DiaryApp.Utilities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DiaryApp.Controllers;
 
 [ApiController]
+[Route("users")]
 public class UserController : ControllerBase
 {
     private readonly IMapper _mapper;
@@ -19,6 +19,11 @@ public class UserController : ControllerBase
         _mapper = mapper;
         _service = service;
     }
+
+    private static IActionResult PasswordConfirmationNotMatch() => new BadRequestObjectResult(new
+    {
+        message = "Your Password is Not Matched with Password Confirmation"
+    });
 
     private async Task<bool> IsEmailExist(string email)
     {
@@ -35,59 +40,14 @@ public class UserController : ControllerBase
     }
 
     [HttpPost]
-    [Route("signin")]
-    public async Task<IActionResult> SignIn([FromBody] UserParamSignInModel userParamSignInModel)
+    [Route("")]
+    public async Task<IActionResult> PostUser([FromBody] UserParamPostModel model)
     {
-        try
-        {
-            var user = await _service.FindUserByEmail(userParamSignInModel.Email);
-            if (user == null) return new NotFoundObjectResult(new {message = "Email is Not Registered"});
-            if (!_service.IsPasswordValid(user.Password, userParamSignInModel.Password))
-                return new AuthenticationErrorResult("Credentials is Wrong");
-            var tokenModel = await _service.GenerateToken(user);
-            HttpContext.Response.Cookies.Append("jwt", tokenModel.RefreshToken, new CookieOptions()
-            {
-                HttpOnly = true,
-                SameSite = SameSiteMode.None,
-                Secure = true,
-                MaxAge = TimeSpan.FromHours(24)
-            });
-            return new OkObjectResult(
-                new
-                {
-                    message = "Success",
-                    data = new
-                    {
-                        accessToken = tokenModel.AccessToken,
-                        refreshToken = tokenModel.RefreshToken,
-                    }
-                });
-        }
-        catch (Exception e)
-        {
-            return new InternalServerErrorResult("Failed to Sign In");
-        }
-    }
-
-    [HttpPost]
-    [Route("signup")]
-    public async Task<IActionResult> SignUp([FromBody] UserParamSignUpModel userParamSignUpModel)
-    {
-        if(!userParamSignUpModel.PasswordMatched) return new BadRequestObjectResult(new
-        {
-            message = "Your Password is Not Matched with Password Confirmation"
-        });
-        if (await IsUserNameExist(userParamSignUpModel.Username) || await IsEmailExist(userParamSignUpModel.Email))
+        if (!model.PasswordMatched) return PasswordConfirmationNotMatch();
+        if (await IsUserNameExist(model.Username) || await IsEmailExist(model.Email))
             return new ValidationFailedResult(ModelState);
-        try
-        {
-            var user = _mapper.Map<User>(userParamSignUpModel);
-            await _service.AddUser(user);
-            return new ObjectCreatedResult(new {user.Id});
-        }
-        catch (Exception e)
-        {
-            return new InternalServerErrorResult("Failed to Create User");
-        }
+        var user = _mapper.Map<User>(model);
+        await _service.AddUser(user);
+        return new ObjectCreatedResult(new {user.Id});
     }
 }

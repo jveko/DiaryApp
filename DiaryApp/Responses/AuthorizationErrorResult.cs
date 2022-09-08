@@ -2,9 +2,9 @@
 
 namespace DiaryApp.Responses;
 
-public class TokenErrorResult : ObjectResult
+public class AuthorizationErrorResult : ObjectResult
 {
-    public TokenErrorResult(string message) : base(new {message})
+    public AuthorizationErrorResult(string message) : base(new {message})
     {
         StatusCode = StatusCodes.Status401Unauthorized;
     }

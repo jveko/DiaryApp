@@ -2,7 +2,7 @@
 
 namespace DiaryApp.Models;
 
-public class UserInNoteDto
+public class UserInNoteGetByIdDto
 {
     [Key] public int Id { get; set; }
     [Required]

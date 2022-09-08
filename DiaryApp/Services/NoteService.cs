@@ -37,8 +37,10 @@ public class NoteService : INoteService
         return note;
     }
 
-    public async Task UpdateNote(Note note)
+    public async Task UpdateNote(Note note, NoteParamPutModel model)
     {
+        note.Title = model.Title;
+        note.Content = model.Content;
         note.UpdatedAt = DateTime.Now;
         await _context.SaveChangesAsync();
     }

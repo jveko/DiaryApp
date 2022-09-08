@@ -1,18 +1,17 @@
-﻿using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using Microsoft.IdentityModel.JsonWebTokens;
-using JwtRegisteredClaimNames = System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames;
+using DiaryApp.Interfaces;
+using Microsoft.IdentityModel.Tokens;
 
-namespace DiaryApp.Utilities;
+namespace DiaryApp.Services;
 
-public class TokenManager
+public class TokenService : ITokenService
 {
     private const string AccessTokenSecret = "RGlhcnlBcHBBY2Nlc3NUb2tlbg==";
     private const string RefreshTokenSecret = "RGlhcnlBcHBSZWZyZXNoVG9rZW4=";
     private const string SecurityAlgorithm = SecurityAlgorithms.HmacSha256;
 
-    public static string GenerateAccessToken(int id)
+    public string GenerateAccessToken(int id)
     {
         var key = Convert.FromBase64String(AccessTokenSecret);
         var securityKey = new SymmetricSecurityKey(key);
@@ -22,7 +21,7 @@ public class TokenManager
             {
                 new Claim("userId", id.ToString())
             }),
-            Expires = DateTime.UtcNow.AddMilliseconds(10),
+            Expires = DateTime.UtcNow.AddHours(1),
             SigningCredentials = new SigningCredentials(securityKey, SecurityAlgorithm)
         };
         var handler = new JwtSecurityTokenHandler();
@@ -30,7 +29,7 @@ public class TokenManager
         return handler.WriteToken(token);
     }
 
-    public static string GenerateRefreshToken(int id)
+    public string GenerateRefreshToken(int id)
     {
         var key = Convert.FromBase64String(RefreshTokenSecret);
         var securityKey = new SymmetricSecurityKey(key);
@@ -40,7 +39,7 @@ public class TokenManager
             {
                 new Claim("userId", id.ToString())
             }),
-            Expires = DateTime.UtcNow.AddMinutes(3),
+            Expires = DateTime.UtcNow.AddDays(1),
             SigningCredentials = new SigningCredentials(securityKey, SecurityAlgorithm)
         };
 
@@ -49,39 +48,39 @@ public class TokenManager
         return handler.WriteToken(token);
     }
 
-    public static ClaimsPrincipal? ValidateRefreshToken(string refreshToken)
+    public ClaimsPrincipal? ValidateRefreshToken(string refreshToken)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        return tokenHandler.ValidateToken(refreshToken, GetValidationParametersRefreshToken(), out var validatedToken);
-    }
-    public static ClaimsPrincipal? ValidateAccessToken(string accessToken)
-    {
-        var tokenHandler = new JwtSecurityTokenHandler();
-        return tokenHandler.ValidateToken(accessToken, GetValidationParametersAccessToken(), out var validatedToken);
+        var claims = tokenHandler.ValidateToken(refreshToken, GetParamRefreshToken(), out var validatedToken);
+        return validatedToken.ValidTo > DateTime.UtcNow ? claims : null;
     }
 
-    private static TokenValidationParameters GetValidationParametersRefreshToken()
+    public ClaimsPrincipal? ValidateAccessToken(string accessToken)
     {
-        return new TokenValidationParameters()
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var claims = tokenHandler.ValidateToken(accessToken, GetParamAccessToken(), out var validatedToken);
+        return validatedToken.ValidTo > DateTime.UtcNow ? claims : null;
+    }
+
+    private static TokenValidationParameters GetParamRefreshToken()
+    {
+        return new TokenValidationParameters
         {
             ValidateLifetime = false,
             ValidateAudience = false,
             ValidateIssuer = false,
-            IssuerSigningKey =
-                new SymmetricSecurityKey(
-                    Convert.FromBase64String(RefreshTokenSecret)) // The same key as the one that generate the token
+            IssuerSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(RefreshTokenSecret))
         };
     }
-    private static TokenValidationParameters GetValidationParametersAccessToken()
+
+    private static TokenValidationParameters GetParamAccessToken()
     {
-        return new TokenValidationParameters()
+        return new TokenValidationParameters
         {
             ValidateLifetime = false,
             ValidateAudience = false,
             ValidateIssuer = false,
-            IssuerSigningKey =
-                new SymmetricSecurityKey(
-                    Convert.FromBase64String(AccessTokenSecret)) // The same key as the one that generate the token
+            IssuerSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(AccessTokenSecret))
         };
     }
 }

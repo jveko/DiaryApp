@@ -2,7 +2,7 @@
 
 namespace DiaryApp.Models;
 
-public class NoteParamCreateModel
+public class NoteParamPostModel
 {
     [Required]
     [RegularExpression("^[a-zA-Z0-9]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]

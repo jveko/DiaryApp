@@ -9,6 +9,6 @@ public class UserProfile : Profile
 {
     public UserProfile()
     {
-        CreateMap<UserParamSignUpModel, User>();
+        CreateMap<UserParamPostModel, User>();
     }
 }

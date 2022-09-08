@@ -2,7 +2,7 @@
 
 namespace DiaryApp.Models;
 
-public class UserParamSignUpModel
+public class UserParamPostModel
 {
     [Required] 
     [MaxLength(50)] 

@@ -2,7 +2,7 @@
 
 namespace DiaryApp.Models;
 
-public class UserParamSignInModel
+public class AuthenticationParamPostModel
 {
     [Required]
     [EmailAddress]

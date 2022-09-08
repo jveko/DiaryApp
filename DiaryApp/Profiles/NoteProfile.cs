@@ -8,8 +8,11 @@ public class NoteProfile : Profile
 {
     public NoteProfile()
     {
-        CreateMap<NoteParamCreateModel, Note>();
-        CreateMap<Note, NoteDto>();
-        CreateMap<User, UserInNoteDto>();
+        CreateMap<NoteParamPostModel, Note>();
+        CreateMap<NoteParamPutModel, Note>();
+        CreateMap<Note, NoteGetByIdDto>();
+        CreateMap<User, UserInNoteGetByIdDto>();
+        CreateMap<Note, NoteGetAllDto>();
+        CreateMap<Note, NotePutByIdDto>();
     }
 }

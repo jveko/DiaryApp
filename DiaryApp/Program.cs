@@ -1,6 +1,7 @@
 using System.Net.Mime;
-using System.Text.Json.Serialization;
+using DiaryApp;
 using DiaryApp.Contexts;
+using DiaryApp.Filters;
 using DiaryApp.Interfaces;
 using DiaryApp.Middlewares;
 using DiaryApp.Responses;
@@ -11,9 +12,6 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
-builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -53,9 +51,14 @@ builder.Services.AddAuthentication(x =>
 builder.Services.AddDbContext<DiaryContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DiaryContext")));
 
+builder.Services.AddTransient<ITokenService, TokenService>();
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<INoteService, NoteService>();
-builder.Services.AddControllers().ConfigureApiBehaviorOptions(options =>
+builder.Services.AddTransient<IAuthenticationService, AuthenticationService>();
+builder.Services.AddControllers(conf =>
+{
+    conf.Filters.Add<ExceptionFilter>();
+}).ConfigureApiBehaviorOptions(options =>
 {
     options.InvalidModelStateResponseFactory = context =>
     {
@@ -77,7 +80,10 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
-app.UseMiddleware<ValidateTokenMiddleware>();
+app.UseWhen(context => context.Request.Path.StartsWithSegments("/notes"), conf =>
+{
+    conf.UseMiddleware<ValidateTokenMiddleware>();
+});
 app.MapControllers();
 
 
