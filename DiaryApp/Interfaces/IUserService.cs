@@ -1,6 +1,4 @@
 ﻿using DiaryApp.Entities;
-using DiaryApp.Models;
-using Microsoft.AspNetCore.Mvc;
 
 namespace DiaryApp.Interfaces;
 

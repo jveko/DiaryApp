@@ -1,5 +1,4 @@
 using System.Net.Mime;
-using DiaryApp;
 using DiaryApp.Contexts;
 using DiaryApp.Filters;
 using DiaryApp.Interfaces;

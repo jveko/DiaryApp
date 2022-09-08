@@ -1,7 +1,5 @@
 ﻿using DiaryApp.Exceptions;
 using DiaryApp.Interfaces;
-using DiaryApp.Responses;
-using DiaryApp.Utilities;
 using Newtonsoft.Json;
 
 namespace DiaryApp.Middlewares;

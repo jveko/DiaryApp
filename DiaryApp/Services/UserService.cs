@@ -1,10 +1,7 @@
 ﻿using DiaryApp.Contexts;
 using DiaryApp.Entities;
 using DiaryApp.Interfaces;
-using DiaryApp.Models;
-using DiaryApp.Responses;
 using DiaryApp.Utilities;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace DiaryApp.Services;

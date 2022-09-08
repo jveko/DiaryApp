@@ -1,5 +1,4 @@
 ﻿using DiaryApp.Entities;
-using DiaryApp.Models;
 
 namespace DiaryApp.Interfaces;
 

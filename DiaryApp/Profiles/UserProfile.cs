@@ -1,7 +1,6 @@
 using AutoMapper;
 using DiaryApp.Entities;
 using DiaryApp.Models;
-using DiaryApp.Utilities;
 
 namespace DiaryApp.Profiles;
 

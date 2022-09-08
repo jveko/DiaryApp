@@ -1,6 +1,4 @@
-﻿using System.Linq.Expressions;
-
-namespace DiaryApp.Models;
+﻿namespace DiaryApp.Models;
 
 public class PaginatedParamModel<T>
 {

@@ -1,7 +1,6 @@
 ﻿using DiaryApp.Contexts;
 using DiaryApp.Entities;
 using DiaryApp.Interfaces;
-using DiaryApp.Models;
 using DiaryApp.Utilities;
 using Microsoft.EntityFrameworkCore;
 

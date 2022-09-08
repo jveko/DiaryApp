@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace DiaryApp.Models;
+﻿namespace DiaryApp.Models;
 
 public class AuthenticationParamDeleteModel
 {
