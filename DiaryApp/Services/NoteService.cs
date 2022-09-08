@@ -54,7 +54,7 @@ public class NoteService : INoteService
     public async Task<PaginatedModel<Note>> GetPagedNote(PaginatedParamModel<int> paramModel, int ownerId)
     {
         var notes = _context.Notes.AsQueryable();
-        notes = notes.Where(v => v.OwnerId == ownerId && !v.IsArchive);
+        notes = notes.Where(v => v.OwnerId == ownerId && !v.IsArchive).OrderBy(o => o.Id);
         var totalCount = notes.Count();
         var filteredCount = totalCount;
 
@@ -64,7 +64,7 @@ public class NoteService : INoteService
             filteredCount = notes.Count();
         }
 
-        notes = paramModel.Increment ? notes.Where(v => v.Id > paramModel.Id) : notes.Where(v => v.Id < paramModel.Id);
+        notes = paramModel.Increment ? notes.Where(v => v.Id > paramModel.Id) : notes.Where(v => v.Id <= paramModel.Id);
         notes = notes.Take(paramModel.Size);
         return new PaginatedModel<Note>(totalCount: totalCount, filteredCount: filteredCount,
             pageData: await notes.ToListAsync());
